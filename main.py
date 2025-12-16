@@ -32,7 +32,7 @@ from src.proxy import ProxyDetector
 from src.utils import logger
 from src import utils
 from msg_push import (
-    dingtalk, xizhi, tg_bot, send_email, bark, ntfy, pushplus
+    dingtalk, xizhi, tg_bot, send_email, bark, ntfy, pushplus, gotify, feishubot
 )
 from ffmpeg_install import (
     check_ffmpeg, ffmpeg_path, current_env_path
@@ -341,6 +341,8 @@ def push_message(record_name: str, live_url: str, content: str) -> None:
             ntfy_api, title=msg_title, content=content, tags=ntfy_tags, action_url=live_url, email=ntfy_email
         ),
         'PUSHPLUS': lambda: pushplus(pushplus_token, msg_title, content),
+        '飞书': lambda: feishubot(feishubot_webhook_url, msg_title, content, feishubot_user_id),
+        'gotify': lambda: gotify(gotify_api, gotify_token, title=msg_title, content=content, priority=gotify_priority),
     }
 
     for platform, func in push_functions.items():
@@ -1855,6 +1857,12 @@ while True:
     ntfy_tags = read_config_value(config, '推送配置', 'ntfy推送标签', "tada")
     ntfy_email = read_config_value(config, '推送配置', 'ntfy推送邮箱', "")
     pushplus_token = read_config_value(config, '推送配置', 'pushplus推送token', "")
+    feishubot_webhook_url = read_config_value(config, '推送配置', '飞书推送接口链接', "")
+    feishubot_user_id = read_config_value(config, '推送配置', '飞书通知@对象', "")
+    gotify_api = read_config_value(config, '推送配置', 'gotify推送地址', "")
+    gotify_token = read_config_value(config, '推送配置', 'gotify推送token', "")
+    gotify_priority = int(read_config_value(config, '推送配置', 'gotify推送优先级', 5))
+
     push_message_title = read_config_value(config, '推送配置', '自定义推送标题', "直播间状态更新通知")
     begin_push_message_text = read_config_value(config, '推送配置', '自定义开播推送内容', "")
     over_push_message_text = read_config_value(config, '推送配置', '自定义关播推送内容', "")
