@@ -342,7 +342,7 @@ def push_message(record_name: str, live_url: str, content: str) -> None:
         ),
         'PUSHPLUS': lambda: pushplus(pushplus_token, msg_title, content),
         '飞书': lambda: feishubot(feishubot_webhook_url, msg_title, content, feishubot_user_id),
-        'gotify': lambda: gotify(gotify_api, gotify_token, title=msg_title, content=content, priority=gotify_priority),
+        'GOTIFY': lambda: gotify(gotify_api, gotify_token, title=msg_title, content=content, priority=gotify_priority),
     }
 
     for platform, func in push_functions.items():
